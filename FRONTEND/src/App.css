@@ -1,0 +1,27 @@
+.app {
+  position: relative;
+  min-height: 100vh;
+}
+
+.nav-buttons {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.toggle-button {
+  padding: 10px 20px;
+  background: #00a67d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-button:hover {
+  background: #008f6c;
+}
