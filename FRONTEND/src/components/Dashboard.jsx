@@ -42,22 +42,25 @@ function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                {data.length > 0 ? (
-                  data.map((item, index) => (
-                    <tr key={index}>
-                      <td>{item.email}</td>
-                      <td>{'•'.repeat(10)}</td>
-                      <td>{new Date().toLocaleDateString()}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="3" className="no-data">
-                      No users registered yet
-                    </td>
-                  </tr>
-                )}
-              </tbody>
+  {data.length > 0 ? (
+    data
+      .filter((item) => item.email) // Exclude entries without an email
+      .map((item, index) => (
+        <tr key={index}>
+          <td>{item.email}</td>
+          <td>{'•'.repeat(10)}</td>
+          <td>{new Date().toLocaleDateString()}</td>
+        </tr>
+      ))
+  ) : (
+    <tr>
+      <td colSpan="3" className="no-data">
+        No users registered yet
+      </td>
+    </tr>
+  )}
+</tbody>
+
             </table>
           </div>
         )}

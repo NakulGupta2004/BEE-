@@ -7,31 +7,34 @@ function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/saveData', {
+      const response = await fetch('http://localhost:5000/validateData', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, email: username, password }),
+        body: JSON.stringify({ username, password }),
       });
+
+      const data = await response.json();
 
       if (response.ok) {
         alert('Login successful!');
-        window.location.href = '/dashboard';
+        navigate('/dashboard');
       } else {
-        const data = await response.json();
-        alert(data.message || 'Login failed!');
+        setError(data.message || 'Login failed!');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Login failed!');
+      setError('Login failed: ' + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -39,11 +42,10 @@ function Login() {
 
   return (
     <div className="register-container">
-
       <div className="register-card">
         <div className="sign-in-section">
           <h1>Login</h1>
-          
+
           <div className="social-buttons">
             <button className="social-button">
               <FaFacebook />
@@ -83,6 +85,7 @@ function Login() {
             <div className="forgot-password">
               <a href="#">Forgot Password?</a>
             </div>
+            {error && <div className="error-message">{error}</div>}
             <button type="submit" className="sign-in-button" disabled={isLoading}>
               {isLoading ? 'Logging in...' : 'Login'}
             </button>
@@ -91,7 +94,7 @@ function Login() {
 
         <div className="welcome-section">
           <h2>Welcome Back!</h2>
-          <p>To keep connected with us please login with your personal info</p>
+          <p>To keep connected with us, please login with your personal info</p>
           <div className="button-group">
             <button className="sign-up-button" onClick={() => navigate('/register')}>REGISTER</button>
           </div>

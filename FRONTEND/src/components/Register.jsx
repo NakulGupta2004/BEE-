@@ -1,40 +1,55 @@
 import React, { useState } from 'react';
 import { FaFacebook, FaTwitter, FaLinkedin, FaEnvelope } from 'react-icons/fa';
 import '../styles/register.css';
+import { useNavigate } from 'react-router-dom';
 
 function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [username, setUsername] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
+    setError('');
+  
     try {
-      const response = await fetch('http://localhost:5000/saveData', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, email, password }),
-      });
+      if (confirmPassword === password) {
+        const response = await fetch('http://localhost:5000/saveData', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, email, password }),
+        });
+  
+        const data = await response.json();
 
-      if (response.ok) {
-        setUsername('');
-        setEmail('');
-        setPassword('');
-        alert('Registration successful!');
+        if (response.ok) {
+          setUsername('');
+          setEmail('');
+          setPassword('');
+          setConfirmPassword('');
+          alert('Registration successful!');
+          navigate('/login');
+        } else {
+          setError(data.message || 'Registration failed!');
+        }
+      } else {
+        setError('Passwords do not match!');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Registration failed!');
+      setError('Registration failed: ' + error.message);
     } finally {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <div className="register-container">
       <div className="register-card">
@@ -86,9 +101,16 @@ function Register() {
                 required
               />
             </div>
-            <div className="forgot-password">
-              <a href="#">Forgot Password?</a>
+            <div className="form-group">
+              <input
+                type="password"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
             </div>
+            {error && <div className="error-message">{error}</div>}
             <button type="submit" className="sign-in-button" disabled={isLoading}>
               {isLoading ? 'Registering...' : 'Sign Up'}
             </button>
@@ -99,10 +121,8 @@ function Register() {
           <h2>Hello, Friend!</h2>
           <p>Create your account to access our services</p>
           <div className="btn">
-
-          <button className="sign-up-button" onClick={() => window.location.href = '/login'}>LOGIN</button>
+            <button className="sign-up-button" onClick={() => navigate('/login')}>LOGIN</button>
           </div>
-
         </div>
       </div>
     </div>
